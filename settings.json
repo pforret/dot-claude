@@ -21,7 +21,14 @@
     "document-skills@anthropic-agent-skills": true,
     "frontend-design@claude-plugins-official": true,
     "banana-claude@banana-claude-marketplace": true,
-    "swift-lsp@claude-plugins-official": true
+    "swift-lsp@claude-plugins-official": true,
+    "screenshot-web@cli-skills": true,
+    "screenshot-desktop@cli-skills": true,
+    "markdown-web@cli-skills": true,
+    "markdown-file@cli-skills": true,
+    "skill-creator@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "banana-claude-marketplace": {
@@ -35,9 +42,15 @@
         "source": "github",
         "repo": "pforret/cli-skills"
       }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
     }
   },
   "alwaysThinkingEnabled": true,
-  "autoUpdatesChannel": "latest",
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "autoUpdatesChannel": "latest"
 }
