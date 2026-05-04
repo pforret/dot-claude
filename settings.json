@@ -1,0 +1,43 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "terminal-notifier -title \"Claude Code\" -subtitle \"$(pwd)\" -message \"Execution has finished!\" -sound Boop"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/pforret/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "dev-browser@dev-browser-marketplace": true,
+    "document-skills@anthropic-agent-skills": true,
+    "frontend-design@claude-plugins-official": true,
+    "banana-claude@banana-claude-marketplace": true,
+    "swift-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "banana-claude-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "AgriciDaniel/banana-claude"
+      }
+    },
+    "cli-skills": {
+      "source": {
+        "source": "github",
+        "repo": "pforret/cli-skills"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "autoUpdatesChannel": "latest",
+  "effortLevel": "high"
+}

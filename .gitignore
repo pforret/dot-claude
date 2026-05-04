@@ -1,0 +1,101 @@
+# ---- Secrets / auth ----
+.credentials.json
+*credentials*.json
+*.pem
+*.key
+*.token
+.env
+.env.*
+settings.local.json
+**/settings.local.json
+mcp-needs-auth-cache.json
+
+# ---- Privacy: conversations, history, user content ----
+projects/
+sessions/
+history.jsonl
+file-history/
+paste-cache/
+todos/
+tasks/
+memory/
+downloads/
+backups/
+
+# ---- Local / machine-specific state ----
+session-env/
+shell-snapshots/
+ide/
+worktrees/
+debug/
+notification_states.json
+
+# ---- Caches ----
+cache/
+*-cache/
+*-cache.json
+stats-cache.json
+statsig/
+
+# ---- Telemetry ----
+telemetry/
+
+# ---- Third-party / installed ----
+plugins/
+
+# ---- OS / editor cruft ----
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+
+# ---- child repos ----
+
+/skills/gstack/
+/skills/gstack-upgrade/
+
+# ---- gstack symlinked skills (SKILL.md -> skills/gstack/<name>/SKILL.md) ----
+/skills/autoplan/
+/skills/benchmark/
+/skills/benchmark-models/
+/skills/browse/
+/skills/canary/
+/skills/careful/
+/skills/codex/
+/skills/connect-chrome/
+/skills/context-restore/
+/skills/context-save/
+/skills/cso/
+/skills/design-consultation/
+/skills/design-html/
+/skills/design-review/
+/skills/design-shotgun/
+/skills/devex-review/
+/skills/document-release/
+/skills/freeze/
+/skills/guard/
+/skills/health/
+/skills/investigate/
+/skills/land-and-deploy/
+/skills/learn/
+/skills/make-pdf/
+/skills/office-hours/
+/skills/open-gstack-browser/
+/skills/pair-agent/
+/skills/plan-ceo-review/
+/skills/plan-design-review/
+/skills/plan-devex-review/
+/skills/plan-eng-review/
+/skills/plan-tune/
+/skills/qa/
+/skills/qa-only/
+/skills/retro/
+/skills/review/
+/skills/setup-browser-cookies/
+/skills/setup-deploy/
+/skills/ship/
+/skills/unfreeze/
