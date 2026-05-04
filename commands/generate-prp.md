@@ -26,7 +26,7 @@ The AI agent only gets the context you are appending to the PRP and training dat
 
 ## PRP Generation
 
-Using PRPs/templates/prp_base.md as template:
+Using templates/prp_base.md as template:
 
 ### Critical Context to Include and pass to the AI agent as part of the PRP
 - **Documentation**: URLs with specific sections
@@ -35,10 +35,10 @@ Using PRPs/templates/prp_base.md as template:
 - **Patterns**: Existing approaches to follow
 
 ### Implementation Blueprint
-- Start with pseudocode showing approach
+- Start with pseudocode, showing approach
 - Reference real files for patterns
 - Include error handling strategy
-- list tasks to be completed to fullfill the PRP in the order they should be completed
+- list tasks to be completed to fulfill the PRP in the order they should be completed
 
 ### Validation Gates (Must be Executable) eg for python
 ```bash
@@ -55,15 +55,16 @@ uv run pytest tests/ -v
 *** ULTRATHINK ABOUT THE PRP AND PLAN YOUR APPROACH THEN START WRITING THE PRP ***
 
 ## Output
-Save as: `PRPs/{yyyy-mm-dd}-{feature-name}.md`
+Save as: `<project root>/docs/todo/PRPs/{yyyy-mm-dd}-{feature-name}.md`
 
 ## Quality Checklist
 - [ ] All necessary context included
 - [ ] Validation gates are executable by AI
-- [ ] References existing patterns
+- [ ] References to existing patterns
 - [ ] Clear implementation path
 - [ ] Error handling documented
 
-Score the PRP on a scale of 1-10 (confidence level to succeed in one-pass implementation using claude codes)
+Score the PRP on a scale of 1-10 (confidence level to succeed in one-pass implementation using claude codes).
+If the score is lower than 9, ask the user for clarification questions or help in deciding architecture/implementation.
 
 Remember: The goal is one-pass implementation success through comprehensive context.
