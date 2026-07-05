@@ -52,5 +52,7 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "low",
-  "autoUpdatesChannel": "latest"
+  "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
+  "model": "claude-fable-5[1m]"
 }
