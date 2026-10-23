@@ -1,24 +1,7 @@
----
-name: laravel-upgrade-11-to-12
-description: >-
-  Upgrade a Laravel application from version 11.x to 12.x. Use when the user asks
-  to upgrade/migrate Laravel 11 to 12, bump laravel/framework to ^12, or resolve
-  Laravel 12 breaking changes (Carbon 3 required, HasUuids/UUIDv7, PHPUnit 11,
-  Pest 3, image validation excluding SVG, local disk root path).
----
-
 # Upgrade Laravel 11.x → 12.x
 
 Official guide: https://laravel.com/docs/12.x/upgrade
 Estimated time: ~5 minutes. This is a small release with few breaking changes.
-
-## How to work through an upgrade
-
-1. Start on a clean git branch with a passing test suite.
-2. Update `composer.json`, run `composer update`, then walk the changes below, testing as you go.
-3. Run the test suite and boot the app at the end.
-
-Laravel Shift (https://laravelshift.com/) can automate much of this.
 
 ## Step 1 — Update dependencies (High impact)
 

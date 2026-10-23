@@ -63,14 +63,32 @@ todo.sh current                             → file path of the item last start
 todo.sh move <id> <plan|busy|done|skipped>  → move item <id>
 todo.sh move-file <file> <plan|busy|done|skipped>
 todo.sh set <file> <key> <value>            → set a frontmatter field (e.g. confidence)
+todo.sh busy [--all]                        → busy + plan tables of this repo (--all: of every registered repo)
+todo.sh repos [prune]                       → print the global registry / drop repos whose path is gone
 ```
+
+## Global registry and website
+
+Every repo that runs `init`, `list`, `reindex` or a move is upserted into
+`~/.claude/todo/repos.csv` (columns `"path","name","registered","last_seen"`; override the folder
+with `TODO_REGISTRY_DIR`). The registry is machine-local and gitignored. `todo busy --all` reads it
+and prints the busy and plan tables of every registered repo, grouped by repo; repos with neither
+are omitted, repos whose path is gone give a warning and `todo repos prune` removes them.
+
+`http://todolist.test` (single file `~/.claude/skills/todo/web/index.php`, linked once with
+`cd ~/.claude/skills/todo/web && valet link todolist`) renders the same registry: per repo the planned,
+plan and busy tables, with `?all=1` adding done and skipped. It reads the markdown files at request
+time, so it is always current. `http://todolist.test/config` picks the header and body font (macOS system
+fonts, or the original Nunito) and the color scheme (Light Colors = default, Light Monochrome, Dark Colors,
+Dark Monochrome); the choice is saved in `~/.claude/todo/config.json` next to the registry.
 
 ## Shell command `todo`
 
 `todo.sh` is also symlinked in `$PATH` as `todo` / `todo.sh`. Run outside Claude, it is a thin
 launcher: `todo` prints usage, `todo i` lists, `todo p` is an fzf picker, `todo <id> [execute|plan|done]`
 starts `claude "/todo <file> <verb>"`, and `todo <id> skip` asks the reason and moves the file itself.
-Bare `todo done|skip|show` act on the current item.
+Bare `todo done|skip|show` act on the current item. `todo busy [--all]` and `todo repos [prune]`
+work the same inside and outside Claude.
 Inside Claude you never call those CLI verbs; use the skill-internal commands listed above.
 
 ## Auto-init
@@ -93,6 +111,8 @@ Before any command other than `init`: if `docs/todo/index.md` does not exist, ru
 | `<id> skip`         | SKIP item (any table) |
 | `<id> show`         | print the item file |
 | `done` / `skip` / `show` | same, for the current item (see IDs above) |
+| `busy` / `busy --all` | BUSY: run `todo.sh busy [--all]` and show its output verbatim |
+| `repos` / `repos prune` | run `todo.sh repos [prune]` and show its output verbatim |
 
 `<id>` may be prefixed with `#`. Resolve every form with `todo.sh path <id>`; if it prints an error
 (out of range, unknown table, no current item) show the list and stop. `plan` on a `Pn`/`Bn` item,

@@ -1,27 +1,13 @@
----
-name: laravel-upgrade-12-to-13
-description: >-
-  Upgrade a Laravel application from version 12.x to 13.x. Use when the user asks
-  to upgrade/migrate Laravel 12 to 13, bump laravel/framework to ^13, or resolve
-  Laravel 13 breaking changes (PreventRequestForgery/CSRF rename, PHPUnit 12,
-  Pest 4, Tinker 3, cache serializable_classes, UUIDv7, cache/session prefixes).
----
-
 # Upgrade Laravel 12.x → 13.x
 
 Official guide: https://laravel.com/docs/13.x/upgrade
 Estimated time: ~10 minutes.
 
-## How to work through an upgrade
+## Optional — automate with Laravel Boost
 
-1. Start on a clean git branch with a passing test suite.
-2. Update `composer.json`, run `composer update`, then walk the changes below, testing as you go.
-3. Run the test suite and boot the app at the end.
-
-### Optional: automate with Laravel Boost (AI)
 Laravel Boost (`^2.0`) is a first-party MCP server. Once installed in a Laravel 12 app, run
 the `/upgrade-laravel-v13` slash command in Claude Code (or Cursor/VS Code/etc.) for a guided
-upgrade. Laravel Shift (https://laravelshift.com/) is another option.
+upgrade.
 
 ## Step 1 — Update dependencies (High impact)
 

@@ -1,24 +1,7 @@
----
-name: laravel-upgrade-9-to-10
-description: >-
-  Upgrade a Laravel application from version 9.x to 10.x. Use when the user asks
-  to upgrade/migrate Laravel 9 to 10, bump laravel/framework to ^10, or resolve
-  Laravel 10 breaking changes (PHP 8.1, Composer 2.2, Monolog 3, removed $dates
-  property, DB expressions getValue, removed dispatchNow, native types).
----
-
 # Upgrade Laravel 9.x → 10.x
 
 Official guide: https://laravel.com/docs/10.x/upgrade
 Estimated time: ~10 minutes.
-
-## How to work through an upgrade
-
-1. Start on a clean git branch with a passing test suite.
-2. Update `composer.json`, run `composer update`, then walk the changes below, testing as you go.
-3. Run the test suite and boot the app at the end.
-
-Laravel Shift (https://laravelshift.com/) can automate much of this.
 
 ## Prerequisites (High impact)
 

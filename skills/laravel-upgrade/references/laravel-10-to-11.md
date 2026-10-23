@@ -1,25 +1,7 @@
----
-name: laravel-upgrade-10-to-11
-description: >-
-  Upgrade a Laravel application from version 10.x to 11.x. Use when the user asks
-  to upgrade/migrate Laravel 10 to 11, bump laravel/framework to ^11, or resolve
-  Laravel 11 breaking changes (PHP 8.2, modifying columns, float/double types,
-  Sanctum 4, published package migrations, Carbon 3, per-second rate limiting).
----
-
 # Upgrade Laravel 10.x → 11.x
 
 Official guide: https://laravel.com/docs/11.x/upgrade
 Estimated time: ~15 minutes. Most breaking changes affect only a portion of apps.
-
-## How to work through an upgrade
-
-1. Ensure the project is on a clean git branch and the test suite passes BEFORE starting.
-2. Confirm prerequisites, then update `composer.json`, run `composer update`, then walk the
-   breaking changes below in order, running tests after each meaningful change.
-3. Run `php artisan test` (or `vendor/bin/phpunit`/`pest`) and boot the app at the end.
-
-A community tool, Laravel Shift (https://laravelshift.com/), can automate much of this.
 
 ## Prerequisites (High impact)
 

@@ -23,6 +23,8 @@ downloads/
 backups/
 
 # ---- Local / machine-specific state ----
+# todo skill registry (repos.csv, machine-local)
+/todo/
 session-env/
 shell-snapshots/
 ide/
@@ -104,3 +106,4 @@ Thumbs.db
 /chrome/
 /skills/synced
 /state/
+/docs/

@@ -10,6 +10,8 @@
 #   todo <id> skip                skip item <id> (asks for the reason)
 #   todo done | skip | show       same, for the item last started (docs/todo/.current)
 #   todo add <text>               start claude to add a new item
+#   todo busy [--all]             busy + plan items of this repo, or of every registered repo
+#   todo repos [prune]            show the global registry (~/.claude/todo/repos.csv) / drop missing repos
 # IDs: 1,2,.. = planned table   P1,P2,.. = plan table   B1,B2,.. = busy table
 #
 # Skill-internal commands:
@@ -21,6 +23,11 @@
 #   todo.sh move <id> <plan|busy|done|skipped>     move item <id> and reindex
 #   todo.sh move-file <file> <plan|busy|done|skipped>
 #   todo.sh set <file> <key> <value>               set/replace a frontmatter field
+#   todo.sh busy [--all]         busy + plan tables of this repo (or of all registered repos)
+#   todo.sh repos [prune]        print the registry / remove rows whose path no longer exists
+#
+# Global registry: every repo that runs init/list/reindex/move is upserted into
+#   $TODO_REGISTRY_DIR/repos.csv (default ~/.claude/todo/repos.csv), columns "path","name","registered","last_seen".
 set -euo pipefail
 ROOT="${TODO_ROOT:-docs/todo}"
 # a relative ROOT is always taken from the repo root, so the command works from any subdirectory
@@ -38,6 +45,70 @@ item_files() { # item_files <dir>
 dir_for() { # dir_for <planned|plan|busy|done|skipped>
   case "$1" in planned|"") echo "$ROOT" ;; plan|busy|done|skipped) echo "$ROOT/$1" ;; *) echo "bad dir: $1" >&2; exit 1 ;; esac
 }
+
+# ---------------------------------------------------------------- global registry
+
+REG_DIR="${TODO_REGISTRY_DIR:-$HOME/.claude/todo}"
+REG="$REG_DIR/repos.csv"
+REG_HEADER='"path","name","registered","last_seen"'
+
+register_repo() { # upsert the current repo; never fails the caller
+  local path name today old registered
+  case "$ROOT" in /*) return 0 ;; esac     # custom absolute ROOT = not a repo
+  path=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+  name=$(basename "$path")
+  today=$(date +%Y-%m-%d)
+  mkdir -p "$REG_DIR"
+  [ -f "$REG" ] || echo "$REG_HEADER" > "$REG"
+  old=$(grep -F "\"$path\"," "$REG" 2>/dev/null | head -1 || true)
+  registered=$today
+  if [ -n "$old" ]; then
+    registered=$(printf '%s' "$old" | sed -E 's/^"[^"]*","[^"]*","([^"]*)".*/\1/')
+    registered=${registered:-$today}
+  fi
+  { echo "$REG_HEADER"; grep -v -F -e "$REG_HEADER" -e "\"$path\"," "$REG" 2>/dev/null || true
+    printf '"%s","%s","%s","%s"\n' "$path" "$name" "$registered" "$today"; } > "$REG.tmp" && mv "$REG.tmp" "$REG"
+}
+
+reg_repos() { # prints: path<TAB>name  (one per registered repo)
+  [ -f "$REG" ] || return 0
+  grep -v -F "$REG_HEADER" "$REG" 2>/dev/null | sed -E 's/^"([^"]*)","([^"]*)".*/\1\t\2/' || true
+}
+
+reg_prune() { # drop rows whose path is no longer a directory
+  [ -f "$REG" ] || { echo "no registry at $REG"; return 0; }
+  local path name
+  { echo "$REG_HEADER"
+    while IFS=$'\t' read -r path name; do
+      [ -z "$path" ] && continue
+      if [ -d "$path" ]; then grep -F "\"$path\"," "$REG" | head -1
+      else echo "pruned: $path ($name)" >&2; fi
+    done <<< "$(reg_repos)"
+  } > "$REG.tmp" && mv "$REG.tmp" "$REG"
+}
+
+print_busy() { # busy + plan tables of $ROOT
+  local any=0
+  if [ -n "$(item_files "$ROOT/busy")" ]; then cat "$ROOT/busy/index.md"; any=1; fi
+  if [ -n "$(item_files "$ROOT/plan")" ]; then [ $any = 1 ] && echo; cat "$ROOT/plan/index.md"; any=1; fi
+  [ $any = 1 ] || echo "_No busy or plan items._"
+}
+
+busy_all() { # busy + plan tables of every registered repo
+  local path name
+  [ -f "$REG" ] || { echo "no registered repos yet (registry: $REG)"; return 0; }
+  while IFS=$'\t' read -r path name; do
+    [ -z "$path" ] && continue
+    [ -d "$path/docs/todo" ] || { echo "⚠ missing: $path ($name) — run 'todo repos prune' to drop it" >&2; continue; }
+    ( cd "$path" && ROOT=docs/todo
+      if [ -n "$(item_files "$ROOT/busy")" ] || [ -n "$(item_files "$ROOT/plan")" ]; then
+        echo "## $name  ($path)"; echo; print_busy; echo
+      fi )
+  done <<< "$(reg_repos)"
+}
+
+busy_cmd() { if [ "${1:-}" = "--all" ] || [ "${1:-}" = "-a" ]; then busy_all; else [ -f "$ROOT/index.md" ] || init >/dev/null; print_busy; fi; }
+repos_cmd() { case "${1:-}" in prune) reg_prune ;; *) [ -f "$REG" ] && cat "$REG" || echo "no registry at $REG" ;; esac; }
 
 write_index() { # write_index <dir> <heading> <status-word> [extra-column] [id-prefix]
   local dir="$1" heading="$2" status="$3" extra="${4:-}" prefix="${5:-}" n=0 f
@@ -85,6 +156,7 @@ reindex() {
   write_index "$ROOT/busy" "Todo — busy (in progress; IDs B1, B2, …)" "busy" "" B
   write_index "$ROOT/done" "Todo — done" "done"
   write_index "$ROOT/skipped" "Todo — skipped" "skipped"
+  register_repo || true
 }
 
 nth() { # nth <dir> <n>
@@ -93,6 +165,7 @@ nth() { # nth <dir> <n>
 
 list() {
   [ -f "$ROOT/index.md" ] || init
+  register_repo || true
   cat "$ROOT/index.md"
   if [ -n "$(item_files "$ROOT/plan")" ]; then
     echo; cat "$ROOT/plan/index.md"
@@ -161,9 +234,13 @@ todo — per-repo todo items in docs/todo/ (driven by the Claude Code /todo skil
   todo <id> show        print the item file
   todo done|skip|show   same, for the item last started (see 'todo current')
   todo add <text>       start claude to add a new item
+  todo busy [--all]     busy + plan items of this repo, or (--all) of every registered repo
+  todo repos [prune]    show the global registry / drop repos whose path is gone
 
 IDs:  1, 2, …  planned table      P1, P2, …  plan table (PRP written)      B1, B2, …  busy table
       an item filename (2026-…md) also works anywhere an <id> is expected.
+Registry: $REG  (repos register themselves on init/list/reindex/move)
+Website:  http://todolist.test  (valet link of ~/.claude/skills/todo/web)
 USAGE
 }
 
@@ -246,6 +323,8 @@ cli() { # cli <args...>   (cwd = repo root)
     skip) cli_skip "" ;;
     show) f=$(resolve ""); cat "$f" ;;
     current) resolve "" ;;
+    busy) busy_cmd "${1:-}" ;;
+    repos) repos_cmd "${1:-}" ;;
     \#*|[0-9]*|[PpBb][0-9]*|*.md)
       local verb="${1:-execute}"
       case "$verb" in
@@ -273,6 +352,8 @@ case "$cmd" in
   move) f=$(resolve "$1"); move_file "$f" "$2" ;;
   move-file) move_file "$1" "$2" ;;
   set) set_field "$1" "$2" "$3" ;;
+  busy) busy_cmd "${1:-}" ;;
+  repos) repos_cmd "${1:-}" ;;
   # everything else is the human CLI; run from the repo root
   *) if [ "$cmd" != "" ] && [ "$cmd" != "-h" ] && [ "$cmd" != "--help" ] && [ "$cmd" != "help" ] && [ ! -f "$ROOT/index.md" ]; then
        init >/dev/null; echo "(initialised $ROOT)" >&2

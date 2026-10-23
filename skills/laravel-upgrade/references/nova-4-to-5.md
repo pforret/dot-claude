@@ -1,12 +1,3 @@
----
-name: nova-upgrade-4-to-5
-description: >-
-  Upgrade Laravel Nova from version 4 to 5. Use when the user asks to upgrade/migrate
-  Nova 4 to 5, bump laravel/nova to ^5, or resolve Nova 5 breaking changes (Inertia 2,
-  Fortify replacing laravel/ui, parent::register, api_middleware config, removed Place
-  field, form-backend-validation removal, republishing assets/stubs).
----
-
 # Upgrade Laravel Nova 4 → 5
 
 Official guide: https://nova.laravel.com/docs/v5/upgrade
@@ -20,11 +11,6 @@ Official guide: https://nova.laravel.com/docs/v5/upgrade
 - `doctrine/dbal` removed
 - Client: Inertia Vue3 v2, Heroicons v2, Trix v2; removed `form-backend-validation` and
   `places.js`
-
-## How to work through an upgrade
-
-Start on a clean git branch with a passing test suite. Work the steps in order, then boot
-Nova and click through your resources, lenses, actions, and custom tools.
 
 ## Step 1 — Update the Composer dependency
 
